@@ -13,6 +13,7 @@ class AuthMethods{
 //building secure authentication systems
   final FirebaseAuth _auth= FirebaseAuth.instance;
 
+  // ignore: deprecated_member_use
   User _userFromFirebaseUser(FirebaseUser user){
     return user!=null ? User(userId:user.uid ):null;
   }
@@ -21,6 +22,7 @@ class AuthMethods{
     try{
       UserCredential result= await _auth.signInWithEmailAndPassword
         (email: email, password:password);
+      // ignore: deprecated_member_use
       FirebaseUser firebaseUser =result.user;
       return _userFromFirebaseUser(firebaseUser);
 
@@ -31,10 +33,11 @@ class AuthMethods{
     }
   }
 
-  Future signoutWithEmailAndPassword (String email, String password)async{
+  Future signUpWithEmailAndPassword (String email, String password)async{
     try{
       UserCredential result= await _auth.signInWithEmailAndPassword
         (email: email, password:password);
+      // ignore: deprecated_member_use
       FirebaseUser firebaseUser =result.user;
       return _userFromFirebaseUser(firebaseUser);
 

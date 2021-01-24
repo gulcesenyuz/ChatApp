@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:newrole/helper/helperfunctions.dart';
+import 'package:newrole/services/auth.dart';
+import 'package:newrole/services/database.dart';
 import 'package:newrole/widgets/widget.dart';
 
 import '../colors.dart';
+import 'chatRoomsScreen.dart';
 
 
 class SignUp extends StatefulWidget {
+  final Function toggle;
+  SignUp(this.toggle);
+
   @override
   _SignUpState createState() => _SignUpState();
 }
@@ -12,6 +19,9 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
 
   bool isLoading=false;
+
+  AuthMethods authMethods=new AuthMethods();
+  DatabaseMethods databaseMethods=new DatabaseMethods();
 
   final formKey= GlobalKey<FormState>();// allows validation of the form in a later step.
 
@@ -21,8 +31,27 @@ class _SignUpState extends State<SignUp> {
 
   signMeUp(){
     if(formKey.currentState.validate()){
-      setState(() {
+      Map<String, String>userInfoMap={
+        "name": userNameTextEditingController.text,
+        "email":emailTextEditingController.text
+      };
+
+      HelperFunctions.saveUserEmailSharedPreference(emailTextEditingController.text);
+      HelperFunctions.saveUserNameSharedPreference(userNameTextEditingController.text);
+      setState(() {//12.40
         isLoading=true;
+      });
+      authMethods.signUpWithEmailAndPassword(emailTextEditingController.text,
+      passwordTextEditingController.text).then((val){
+       // print("${val.uid}]");,
+
+
+        databaseMethods.uploadUserInfo(userInfoMap);
+        HelperFunctions.saveUserLoggedInSharedPreference(true);
+        Navigator.pushReplacement(context, MaterialPageRoute(
+            builder: (context)=> ChatRoom()
+        ));
+        
       });
 
     }
@@ -31,8 +60,10 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarMain(context),
-      body:  SingleChildScrollView (
+      appBar: appBarMain(context, colorA),
+      body: isLoading? Container(
+        child: Center(child: CircularProgressIndicator(backgroundColor: Colors.white70,))
+      ): SingleChildScrollView (
         child: Container(
           height: MediaQuery.of(context).size.height-90,
           alignment: Alignment.bottomCenter,
@@ -65,8 +96,9 @@ class _SignUpState extends State<SignUp> {
                       ),
                       TextFormField(
                         validator: (val){
-                          return val.length>6? null: 'the password sgould contain minimum 6 characters';
+                          return val.length>6? null: 'the password should contain minimum 6 characters';
                         },
+                        obscureText: true,
                         controller: passwordTextEditingController,
                         style: simpleTextFieldStyle(),
                         decoration: textFieldInputDecoration('password'),
@@ -135,13 +167,21 @@ class _SignUpState extends State<SignUp> {
                         color: Colors.white,
                         fontSize:17
                     ),),
-                    Text(' Sign in now',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize:17,
-                          decoration: TextDecoration.underline
+                    GestureDetector(
+                      onTap: (){
+                        widget.toggle();
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Text(' Sign in now',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize:17,
+                              decoration: TextDecoration.underline
 
-                      ),),
+                          ),),
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 15,),

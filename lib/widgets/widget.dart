@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../colors.dart';
 
-Widget appBarMain(BuildContext context){
+Widget appBarMain(BuildContext context,background){
   return AppBar(
-    backgroundColor: colorA,
+    backgroundColor: background,
     title:Image.asset("assets/images/newrolename.png",
       height: 40,) ,
 
