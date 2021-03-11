@@ -1,9 +1,9 @@
 # newrole
 
-SİGN İN DE PASSWORD YAZI GİRDİSİ RENK BEYAZ OLACAK
 
 
-A new Flutter application.
+A new Flutter application. 
+Basics for Chat App
 
 ## Getting Started
 
